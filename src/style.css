@@ -111,3 +111,56 @@ footer {
     width: 100%;
   }
 }
+
+#todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+#todo-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+#todo-list li input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+#todo-list li span {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+#todo-list li button {
+  flex-shrink: 0;
+  padding: 0.5rem 0.75rem;
+}
+
+#todo-list li:has(input[type="checkbox"]:checked) span {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+#todo-list li:has(input[type="checkbox"]:checked) {
+  opacity: 0.8;
+}
+
+@media (max-width: 599px) {
+  #todo-list li {
+    align-items: flex-start;
+  }
+
+  #todo-list li button {
+    width: auto;
+  }
+}

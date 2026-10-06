@@ -37,8 +37,28 @@ function renderTodos(list: HTMLUListElement): void {
   for (const todo of todos) {
     const item = document.createElement("li");
 
-    item.textContent = todo.text;
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = todo.completed;
 
+    checkbox.addEventListener("change", () => {
+      todo.completed = checkbox.checked;
+      renderTodos(list);
+    });
+
+    const text = document.createElement("span");
+    text.textContent = todo.text;
+
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.textContent = "Delete";
+
+    deleteButton.addEventListener("click", () => {
+      todos = todos.filter((currentTodo) => currentTodo.id !== todo.id);
+      renderTodos(list);
+    });
+
+    item.append(checkbox, text, deleteButton);
     list.append(item);
   }
 }
