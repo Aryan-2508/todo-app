@@ -2,15 +2,38 @@ import "./style.css";
 import type { Todo } from "./types";
 import { createTodo } from "./todo";
 
+type Filter = "all" | "active" | "completed";
+
 const form = document.querySelector<HTMLFormElement>("#todo-form");
 const input = document.querySelector<HTMLInputElement>("#todo-input");
 const list = document.querySelector<HTMLUListElement>("#todo-list");
+
+const filterButtons =
+  document.querySelectorAll<HTMLButtonElement>("[data-filter]");
 
 if (!form || !input || !list) {
   throw new Error("Required todo elements were not found.");
 }
 
 let todos: Todo[] = [];
+let currentFilter: Filter = "all";
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const filter = button.dataset.filter;
+
+    if (
+      filter !== "all" &&
+      filter !== "active" &&
+      filter !== "completed"
+    ) {
+      return;
+    }
+
+    currentFilter = filter;
+    renderTodos(list);
+  });
+});
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -34,7 +57,19 @@ form.addEventListener("submit", (event) => {
 function renderTodos(list: HTMLUListElement): void {
   list.innerHTML = "";
 
-  for (const todo of todos) {
+  const filteredTodos = todos.filter((todo) => {
+    if (currentFilter === "active") {
+      return !todo.completed;
+    }
+
+    if (currentFilter === "completed") {
+      return todo.completed;
+    }
+
+    return true;
+  });
+
+  for (const todo of filteredTodos) {
     const item = document.createElement("li");
 
     const checkbox = document.createElement("input");
