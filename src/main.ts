@@ -7,18 +7,25 @@ type Filter = "all" | "active" | "completed";
 
 const form = document.querySelector<HTMLFormElement>("#todo-form");
 const input = document.querySelector<HTMLInputElement>("#todo-input");
-const formMessage = document.querySelector<HTMLParagraphElement>("#form-message");
+const formMessage =
+  document.querySelector<HTMLParagraphElement>("#form-message");
 const list = document.querySelector<HTMLUListElement>("#todo-list");
 
 const filterButtons =
   document.querySelectorAll<HTMLButtonElement>("[data-filter]");
 
-if (!form || !input || !formMessage || !list) {
+if (form === null || input === null || formMessage === null || list === null) {
   throw new Error("Required todo elements were not found.");
 }
 
+const todoForm = form;
+const todoInput = input;
+const messageElement = formMessage;
+const todoList = list;
+
 let todos: Todo[] = loadTodos();
 let currentFilter: Filter = "all";
+let messageTimer: number | undefined;
 
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -33,19 +40,27 @@ filterButtons.forEach((button) => {
     }
 
     currentFilter = filter;
-    formMessage.textContent = "";
-    renderTodos(list);
+    messageElement.textContent = "";
+
+    filterButtons.forEach((filterButton) => {
+      filterButton.setAttribute(
+        "aria-pressed",
+        filterButton === button ? "true" : "false",
+      );
+    });
+
+    renderTodos(todoList);
   });
 });
 
-form.addEventListener("submit", (event) => {
+todoForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  const text = input.value.trim();
+  const text = todoInput.value.trim();
 
   if (text === "") {
-    formMessage.textContent = "Please enter a task.";
-    input.focus();
+    messageElement.textContent = "Please enter a task.";
+    todoInput.focus();
     return;
   }
 
@@ -54,16 +69,29 @@ form.addEventListener("submit", (event) => {
   todos.push(todo);
   saveTodos(todos);
 
-  formMessage.textContent = "Task added.";
+  showMessage("Task added.");
 
-  renderTodos(list);
+  renderTodos(todoList);
 
-  form.reset();
-  input.focus();
+  todoForm.reset();
+  todoInput.focus();
 });
 
-function renderTodos(list: HTMLUListElement): void {
-  list.innerHTML = "";
+function showMessage(message: string): void {
+  if (messageTimer !== undefined) {
+    window.clearTimeout(messageTimer);
+  }
+
+  messageElement.textContent = message;
+
+  messageTimer = window.setTimeout(() => {
+    messageElement.textContent = "";
+    messageTimer = undefined;
+  }, 2000);
+}
+
+function renderTodos(todoList: HTMLUListElement): void {
+  todoList.innerHTML = "";
 
   const filteredTodos = todos.filter((todo) => {
     if (currentFilter === "active") {
@@ -88,7 +116,7 @@ function renderTodos(list: HTMLUListElement): void {
       emptyMessage.textContent = "No tasks yet.";
     }
 
-    list.append(emptyMessage);
+    todoList.append(emptyMessage);
     return;
   }
 
@@ -103,7 +131,7 @@ function renderTodos(list: HTMLUListElement): void {
     checkbox.addEventListener("change", () => {
       todo.completed = checkbox.checked;
       saveTodos(todos);
-      renderTodos(list);
+      renderTodos(todoList);
     });
 
     const text = document.createElement("span");
@@ -117,17 +145,15 @@ function renderTodos(list: HTMLUListElement): void {
     deleteButton.addEventListener("click", () => {
       todos = todos.filter((currentTodo) => currentTodo.id !== todo.id);
       saveTodos(todos);
-      const message = document.querySelector<HTMLParagraphElement>("#form-message");
 
-      if (message) {
-        message.textContent = "Task deleted.";
-      }
-      renderTodos(list);
+      showMessage("Task deleted.");
+
+      renderTodos(todoList);
     });
 
     item.append(checkbox, text, deleteButton);
-    list.append(item);
+    todoList.append(item);
   }
 }
 
-renderTodos(list);
+renderTodos(todoList);
