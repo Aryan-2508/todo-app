@@ -1,6 +1,7 @@
 import "./style.css";
 import type { Todo } from "./types";
 import { createTodo } from "./todo";
+import { loadTodos, saveTodos } from "./storage";
 
 type Filter = "all" | "active" | "completed";
 
@@ -15,7 +16,7 @@ if (!form || !input || !list) {
   throw new Error("Required todo elements were not found.");
 }
 
-let todos: Todo[] = [];
+let todos: Todo[] = loadTodos();
 let currentFilter: Filter = "all";
 
 filterButtons.forEach((button) => {
@@ -47,6 +48,7 @@ form.addEventListener("submit", (event) => {
   const todo = createTodo(text);
 
   todos.push(todo);
+  saveTodos(todos);
 
   renderTodos(list);
 
@@ -78,6 +80,7 @@ function renderTodos(list: HTMLUListElement): void {
 
     checkbox.addEventListener("change", () => {
       todo.completed = checkbox.checked;
+      saveTodos(todos);
       renderTodos(list);
     });
 
@@ -90,6 +93,7 @@ function renderTodos(list: HTMLUListElement): void {
 
     deleteButton.addEventListener("click", () => {
       todos = todos.filter((currentTodo) => currentTodo.id !== todo.id);
+      saveTodos(todos);
       renderTodos(list);
     });
 
@@ -97,3 +101,5 @@ function renderTodos(list: HTMLUListElement): void {
     list.append(item);
   }
 }
+
+renderTodos(list);
