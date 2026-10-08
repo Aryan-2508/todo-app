@@ -25,6 +25,7 @@ const todoList = list;
 
 let todos: Todo[] = loadTodos();
 let currentFilter: Filter = "all";
+let editingTodoId: string | null = null;
 let messageTimer: number | undefined;
 
 filterButtons.forEach((button) => {
@@ -40,6 +41,7 @@ filterButtons.forEach((button) => {
     }
 
     currentFilter = filter;
+    editingTodoId = null;
     messageElement.textContent = "";
 
     filterButtons.forEach((filterButton) => {
@@ -107,6 +109,7 @@ function renderTodos(todoList: HTMLUListElement): void {
 
   if (filteredTodos.length === 0) {
     const emptyMessage = document.createElement("li");
+    emptyMessage.className = "empty-state";
 
     if (currentFilter === "active") {
       emptyMessage.textContent = "No active tasks.";
@@ -122,6 +125,10 @@ function renderTodos(todoList: HTMLUListElement): void {
 
   for (const todo of filteredTodos) {
     const item = document.createElement("li");
+    item.className = "todo-item";
+
+    const todoMain = document.createElement("div");
+    todoMain.className = "todo-main";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -134,26 +141,131 @@ function renderTodos(todoList: HTMLUListElement): void {
       renderTodos(todoList);
     });
 
-    const text = document.createElement("span");
-    text.textContent = todo.text;
+    todoMain.append(checkbox);
 
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.textContent = "Delete";
-    deleteButton.setAttribute("aria-label", `Delete task: ${todo.text}`);
+    if (editingTodoId === todo.id) {
+      renderEditMode(item, todoMain, todo);
+    } else {
+      const text = document.createElement("span");
+      text.className = "todo-text";
+      text.textContent = todo.text;
 
-    deleteButton.addEventListener("click", () => {
-      todos = todos.filter((currentTodo) => currentTodo.id !== todo.id);
-      saveTodos(todos);
+      todoMain.append(text);
 
-      showMessage("Task deleted.");
+      const actions = document.createElement("div");
+      actions.className = "todo-actions";
 
-      renderTodos(todoList);
-    });
+      const editButton = document.createElement("button");
+      editButton.type = "button";
+      editButton.className = "button-secondary";
+      editButton.textContent = "Edit";
+      editButton.setAttribute("aria-label", `Edit task: ${todo.text}`);
 
-    item.append(checkbox, text, deleteButton);
+      editButton.addEventListener("click", () => {
+        editingTodoId = todo.id;
+        messageElement.textContent = "";
+        renderTodos(todoList);
+      });
+
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "button-danger";
+      deleteButton.textContent = "Delete";
+      deleteButton.setAttribute("aria-label", `Delete task: ${todo.text}`);
+
+      deleteButton.addEventListener("click", () => {
+        todos = todos.filter((currentTodo) => currentTodo.id !== todo.id);
+
+        if (editingTodoId === todo.id) {
+          editingTodoId = null;
+        }
+
+        saveTodos(todos);
+
+        showMessage("Task deleted.");
+
+        renderTodos(todoList);
+      });
+
+      actions.append(editButton, deleteButton);
+      item.append(todoMain, actions);
+    }
+
     todoList.append(item);
   }
+}
+
+function renderEditMode(
+  item: HTMLLIElement,
+  todoMain: HTMLDivElement,
+  todo: Todo,
+): void {
+  const editInput = document.createElement("textarea");
+  editInput.className = "todo-edit-input";
+  editInput.value = todo.text;
+  editInput.rows = 4;
+  editInput.setAttribute("aria-label", `Edit task: ${todo.text}`);
+
+  const editActions = document.createElement("div");
+  editActions.className = "todo-actions";
+
+  const saveButton = document.createElement("button");
+  saveButton.type = "button";
+  saveButton.className = "button-primary";
+  saveButton.textContent = "Save";
+
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.className = "button-secondary";
+  cancelButton.textContent = "Cancel";
+
+  const saveEdit = (): void => {
+    const updatedText = editInput.value.trim();
+
+    if (updatedText === "") {
+      showMessage("Task cannot be empty.");
+      editInput.focus();
+      return;
+    }
+
+    todo.text = updatedText;
+    editingTodoId = null;
+
+    saveTodos(todos);
+    showMessage("Task updated.");
+
+    renderTodos(todoList);
+  };
+
+  saveButton.addEventListener("click", saveEdit);
+
+  cancelButton.addEventListener("click", () => {
+    editingTodoId = null;
+    messageElement.textContent = "";
+    renderTodos(todoList);
+  });
+
+  editInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      saveEdit();
+    }
+
+    if (event.key === "Escape") {
+      editingTodoId = null;
+      messageElement.textContent = "";
+      renderTodos(todoList);
+    }
+  });
+
+  todoMain.append(editInput);
+  editActions.append(saveButton, cancelButton);
+  item.append(todoMain, editActions);
+
+  setTimeout(() => {
+    editInput.focus();
+    editInput.select();
+  }, 0);
 }
 
 renderTodos(todoList);

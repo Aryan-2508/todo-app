@@ -1,190 +1,611 @@
+/* ========================================
+   Design Tokens
+======================================== */
+
+:root {
+  --font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+
+  --color-background: #f6f7fb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f9fafb;
+
+  --color-text: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-soft: #eef2ff;
+
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-danger-soft: #fef2f2;
+
+  --color-success: #059669;
+  --color-success-soft: #ecfdf5;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  --shadow-sm: 0 1px 2px rgb(15 23 42 / 4%);
+  --shadow-md:
+    0 4px 12px rgb(15 23 42 / 5%),
+    0 1px 3px rgb(15 23 42 / 4%);
+  --shadow-lg:
+    0 12px 30px rgb(15 23 42 / 8%),
+    0 3px 8px rgb(15 23 42 / 4%);
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+}
+
+/* ========================================
+   Reset
+======================================== */
+
 * {
   box-sizing: border-box;
 }
 
 html {
-  font-family: Arial, sans-serif;
+  min-width: 320px;
+  font-family: var(--font-family);
   line-height: 1.5;
+  font-weight: 400;
+  color: var(--color-text);
+  background: var(--color-background);
+  text-rendering: optimizeLegibility;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #f5f5f5;
-  color: #222;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgb(99 102 241 / 8%),
+      transparent 30rem
+    ),
+    var(--color-background);
 }
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+/* ========================================
+   Layout
+======================================== */
 
 header,
 main,
 footer {
-  width: min(100% - 2rem, 900px);
+  width: min(100% - 2rem, 960px);
   margin-inline: auto;
 }
 
 header {
-  padding-block: 2rem;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
-header p {
-  margin-block: 0.5rem 0;
+  padding-block: 3.5rem 2rem;
 }
 
 main {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
 }
 
+footer {
+  padding-block: 2rem 3rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* ========================================
+   Header
+======================================== */
+
+header h1 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+}
+
+header p {
+  max-width: 620px;
+  margin: 0.85rem 0 0;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+
+/* ========================================
+   Sections / Cards
+======================================== */
+
 section {
-  background: #ffffff;
-  padding: 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
 }
 
 h2 {
-  margin-top: 0;
+  margin: 0 0 1.25rem;
+  color: var(--color-text);
+  font-size: 1.2rem;
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
 }
+
+/* ========================================
+   Add Task Form
+======================================== */
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.7rem;
 }
 
 label {
-  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 650;
 }
 
-input {
-  width: 100%;
-  padding: 0.75rem;
-  font: inherit;
-  border: 1px solid #999;
-  border-radius: 4px;
+form input {
+  min-height: 48px;
 }
+
+input,
+textarea {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+input:hover,
+textarea:hover {
+  border-color: #9ca3af;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgb(79 70 229 / 12%);
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* ========================================
+   Form Message
+======================================== */
+
+#form-message {
+  min-height: 1.4rem;
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 550;
+}
+
+/* ========================================
+   Buttons
+======================================== */
 
 button {
+  min-height: 44px;
   width: fit-content;
-  padding: 0.75rem 1rem;
-  font: inherit;
-  font-weight: 600;
-  border: 0;
-  border-radius: 4px;
+  padding: 0.65rem 1rem;
+  color: var(--color-text);
+  background: #f3f4f6;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 650;
   cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 button:focus-visible,
-input:focus-visible {
-  outline: 3px solid #005fcc;
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgb(79 70 229 / 20%);
   outline-offset: 2px;
 }
 
-#todo-list {
-  margin: 0;
-  padding-left: 1.5rem;
+/* ========================================
+   Add Task Button
+======================================== */
+
+form button {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
 }
 
-footer {
-  padding-block: 2rem;
+form button:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-md);
 }
 
-@media (min-width: 600px) {
-  form {
-    flex-direction: row;
-    align-items: end;
-  }
+/* ========================================
+   Filter Controls
+======================================== */
 
-  input {
-    flex: 1;
-  }
+.filter-section {
+  margin-block: 0 1.5rem;
 }
 
-@media (max-width: 599px) {
-  button {
-    width: 100%;
-  }
+.filter-section h3 {
+  margin: 0 0 0.7rem;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
+
+.filter-buttons {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: #f3f4f6;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.filter-buttons button {
+  min-height: 38px;
+  padding: 0.5rem 0.9rem;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border-color: transparent;
+}
+
+.filter-buttons button:hover {
+  color: var(--color-text);
+  background: #e5e7eb;
+}
+
+.filter-buttons button[aria-pressed="true"] {
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ========================================
+   Todo List
+======================================== */
 
 #todo-list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding-left: 0;
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 
-#todo-list li {
+/* ========================================
+   Todo Card
+======================================== */
+
+.todo-item {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fafafa;
+  align-items: flex-start;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
 }
 
-#todo-list li input[type="checkbox"] {
+.todo-item:hover {
+  border-color: #d1d5db;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   Todo Main Content
+======================================== */
+
+.todo-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-main input[type="checkbox"] {
   width: 1.25rem;
   height: 1.25rem;
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+  accent-color: var(--color-primary);
+  cursor: pointer;
 }
 
-#todo-list li span {
+/* ========================================
+   Todo Text
+======================================== */
+
+.todo-text {
   flex: 1;
+  min-width: 0;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1.55;
   overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
-#todo-list li button {
-  flex-shrink: 0;
-  padding: 0.5rem 0.75rem;
+/* ========================================
+   Todo Actions
+======================================== */
+
+.todo-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
 }
 
-#todo-list li:has(input[type="checkbox"]:checked) span {
+.todo-actions button {
+  min-height: 38px;
+  padding: 0.5rem 0.8rem;
+}
+
+/* ========================================
+   Button Variants
+======================================== */
+
+.button-primary {
+  color: #ffffff;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.button-primary:hover {
+  color: #ffffff;
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.button-secondary {
+  color: #374151;
+  background: #f9fafb;
+  border-color: var(--color-border);
+}
+
+.button-secondary:hover {
+  color: var(--color-text);
+  background: #f3f4f6;
+  border-color: var(--color-border-strong);
+}
+
+.button-danger {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-color: #fecaca;
+}
+
+.button-danger:hover {
+  color: var(--color-danger-hover);
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+/* ========================================
+   Edit Mode
+======================================== */
+
+.todo-edit-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+/* ========================================
+   Completed Todo
+======================================== */
+
+.todo-item:has(input[type="checkbox"]:checked) {
+  background: var(--color-surface-muted);
+}
+
+.todo-item:has(input[type="checkbox"]:checked) .todo-text {
+  color: var(--color-text-secondary);
   text-decoration: line-through;
-  opacity: 0.6;
+  text-decoration-thickness: 1.5px;
 }
 
-#todo-list li:has(input[type="checkbox"]:checked) {
-  opacity: 0.8;
+/* ========================================
+   Empty State
+======================================== */
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  padding: 2rem 1rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  background: var(--color-surface-muted);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
 }
+
+/* ========================================
+   Desktop Layout
+======================================== */
+
+@media (min-width: 600px) {
+  form {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  form input {
+    flex: 1;
+  }
+
+  form button {
+    flex: 0 0 auto;
+  }
+}
+
+/* ========================================
+   Mobile Layout
+======================================== */
 
 @media (max-width: 599px) {
-  #todo-list li {
-    align-items: flex-start;
+  header {
+    padding-block: 2.25rem 1.5rem;
   }
 
-  #todo-list li button {
-    width: auto;
+  header h1 {
+    font-size: 2.1rem;
+  }
+
+  section {
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .filter-buttons {
+    display: flex;
+    width: 100%;
+  }
+
+  .filter-buttons button {
+    flex: 1;
+  }
+
+  .todo-item {
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .todo-main {
+    width: 100%;
+  }
+
+  .todo-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .todo-actions button {
+    flex: 1;
+  }
+
+  form button {
+    width: 100%;
   }
 }
 
-.filter-section {
-  margin-block: 1.5rem;
+/* ========================================
+   Small Mobile Screens
+======================================== */
+
+@media (max-width: 400px) {
+  header,
+  main,
+  footer {
+    width: min(100% - 1rem, 960px);
+  }
+
+  header h1 {
+    font-size: 1.9rem;
+  }
+
+  .todo-item {
+    padding: 0.85rem;
+  }
+
+  .todo-actions {
+    flex-direction: column;
+  }
+
+  .todo-actions button {
+    width: 100%;
+  }
 }
 
-.filter-section h3 {
-  margin-block: 0 0.75rem;
-  font-size: 1rem;
-}
+/* ========================================
+   Reduced Motion
+======================================== */
 
-.filter-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.filter-buttons button {
-  width: auto;
-}
-
-.filter-buttons button[aria-pressed="true"] {
-  outline: 3px solid #005fcc;
-  outline-offset: 2px;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
